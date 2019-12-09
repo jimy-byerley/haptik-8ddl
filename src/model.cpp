@@ -8,6 +8,28 @@ using namespace la;
 Delta::Delta() {
 	const float ra = 50;	// (mm)
 	const float rb = 200;	// (mm)
+	const float phia_base = deg2rad(18);
+	const float phib_base = deg2rad(6);
+	float phia[N] = {
+		phia_base,
+		M_PI/4 - phia_base,
+		M_PI/4 + phia_base,
+		M_PI/2 - phia_base,
+		M_PI/2 + phia_base,
+		3*M_PI/4 - phia_base,
+		3*M_PI/4 + phia_base,
+		-phia_base
+	};
+	float phib[N] = {
+		phib_base,
+		M_PI/4 - phib_base,
+		M_PI/4 + phib_base,
+		M_PI/2 - phib_base,
+		M_PI/2 + phib_base,
+		3*M_PI/4 - phib_base,
+		3*M_PI/4 + phib_base,
+		-phib_base
+	};
 	for (size_t i=0; i<N; i++) {
 		RgA[i] = vec4(rotz(phia[i]) * vec3({ra, 0, 0}));
 		RgA[i][3] = 1;
@@ -24,13 +46,15 @@ vec8 Delta::mci(const vec8 &X) {
 	mat4 matd = bRe*eRgd;
 	
 	vec4 a[N];
-	vec4 b[N];
 	for (size_t i=0; i<4; i++) {
 		a[i] = matg * vec3({ra, 0, 0});
-		a[3] = 1;
-		b[i] = matg * vec3({rb, 0, 0});
-		b[3] = 1;
+		a[i][3] = 1;
 	}
+	for (size_t i=4; i<8; i++) {
+		a[i] = matd * vec3({ra, 0, 0});
+		a[i][3] = 1;
+	}
+	
 	// ...
 }
 
