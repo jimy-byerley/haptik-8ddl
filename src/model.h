@@ -18,15 +18,15 @@ struct Delta {
 	
 	Delta();	// construction des constantes pour accelerer les calculs
 	
-	la::mat3 RgA[N];	// matrices constantes pour les positionnement de A et B
-	la::mat3 RgB[N];
+	la::vec4 RgA[N];	// matrices constantes pour les positionnement de A et B
+	la::vec3 b[N];
 };
 
 /*
  * facilités internes
 */
 float deg2rad(const float angle);
-la::mat4 quat2mat(const la::vec4 rot, const la::vec3 pos);
-la::mat4 rotz(const float angle);	// matrice de rotation autour de z
+la::mat3 quat2mat(const la::vec4 rot, const la::vec3 pos);
+la::mat3 rotz(const float angle);	// matrice de rotation autour de z
 
 #endif

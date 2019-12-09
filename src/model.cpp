@@ -8,16 +8,30 @@ using namespace la;
 Delta::Delta() {
 	const float ra = 50;	// (mm)
 	const float rb = 200;	// (mm)
-	Ta = mat4({1,0,0,ra,   0,1,0,0,  0,0,1,0,   0,0,0,1});
-	Tb = mat4({1,0,0,rb,   0,1,0,0,  0,0,1,0,   0,0,0,1});
 	for (size_t i=0; i<N; i++) {
-		RgA[i] = rotz(phia[i]) * Ta;
-		RgB[i] = rotz(phib[i]) * Tb;
+		RgA[i] = vec4(rotz(phia[i]) * vec3({ra, 0, 0}));
+		RgA[i][3] = 1;
+		b[i] = rotz(phib[i]) * vec3({rb, 0, 0});
 	}
 }
 
 vec8 Delta::mci(const vec8 &X) {
-	bRe = quat2mat(
+	bRe = quat2mat(vec2quat( *((vec3) &(X[3])) ));
+	eRrg = quat2mat(vec2quat(vec3({X[6], X[7], 0})));
+	eRrd = quat2mat(vec2quat(vec3({-X[6], -X[7], 0})));
+	
+	mat4 matg = bRe*eRrg;
+	mat4 matd = bRe*eRgd;
+	
+	vec4 a[N];
+	vec4 b[N];
+	for (size_t i=0; i<4; i++) {
+		a[i] = matg * vec3({ra, 0, 0});
+		a[3] = 1;
+		b[i] = matg * vec3({rb, 0, 0});
+		b[3] = 1;
+	}
+	// ...
 }
 
 
@@ -34,6 +48,10 @@ vec4 vec2quat(const vec3 &rot) {
 	}
 }
 mat4 quat2mat(const vec4 &rot, const vec3 &pos) {
+	float q1 = rot[0];
+	float q2 = rot[1];
+	float q3 = rot[2];
+	float q4 = rot[3];
 	return mat3({
 		2*(q1*q1 + q2*q2)-1,	2*(q2*q3 - q1*q4), 		2*(q2*q4 + q1*q3), 	pos[0],  
 		2*(q2*q3 + q1*q4),		2*(q1*q1 + q3*q3)-1,	2*(q3*q4 - q1*q2), 	pos[1],	 
