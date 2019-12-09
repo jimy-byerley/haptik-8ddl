@@ -55,13 +55,36 @@ vec8 Delta::mci(const vec8 &X) {
 		a[i][3] = 1;
 	}
 	
+	// indices des a[i] a utiliser selon le plan
+	size_t v1[] = {0, 3, 4, 7};
+	size_t v2[] = {1, 2, 5, 6};
+		
+	// plan x = a
+	for (size_t i=0; i<4; i++) {
+		vec3 S = a[v1[i]];	// coord centre sphere
+		vec3 K = vec3({S[0], b[v1[i]][1], S[2]});	// coord projection de S sur le plan
+		float sk = (S-K).norm();
+		if (abs(sk) < R) {
+			if ((l+R) >= (b[v1[i]] - K).norm()) {
+				// calcul solutions intersections de deux cercles dans le meme plan
+				float L = hypot(R, sk);
+				vec3 A = b[v1[i]][2] - K[2];
+				vec3 B = b[v1[i]][0] - K[0];
+				float a = 2*(A);
+				float b = 2*(B);
+				float c = sq(A) + sq(B) - sq(l) + sq(L);
+				float delta = sq(2*a*c) - 4*(sq(a) + sqt(b))*(sq(c) - sq(b)*sq(L));
+				float z1 = (2*a*c - sqrt(delta)) / (2*(sq(a)+sq(b)) + K[2]);
+				// calcul x1 et x2
+				// ...
+			}
+		}
+	}
+	
 	// ...
 }
 
 
-float deg2rad(const float angle) {
-	return angle * M_PI/180;
-}
 vec4 vec2quat(const vec3 &rot) {
 	if (rot[0] == 0 && rot[1] == 0 && rot[2] == 0)
 		return vec4({1, 0, 0, 0});
