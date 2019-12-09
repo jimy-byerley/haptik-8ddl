@@ -3,7 +3,11 @@
 
 using namespace la;
 
+typedef Matrix<float, 8, 8> mat8;
+typedef Vector<float, 8> vec8;
+
 int main() {
+	vec3 v = pack(0, 2, 4);
 	mat8 m1(2.);
 	mat8 m2 = mat8::identity();
 	

@@ -21,6 +21,13 @@ public:
 	Vector(const S * data) {
 		for (size_t i=0; i<dim; i++)	storage[i] = data[i];
 	}
+	template<size_t dimin> 
+	Vector(const Vector<S,dimin> & data) {
+		size_t n = (dim < dimin)? dim: dimin;
+		size_t i = 0;
+		for (i; i<n; i++)		storage[i] = data.storage[i];
+		for (i; i<dim; i++)		storage[i] = 0;
+	}
 	
 	// methodes d'acces
 	size_t ndim() const { return dim; }
@@ -292,8 +299,19 @@ typedef Matrix<float, 2, 2> mat2;
 typedef Matrix<float, 3, 3> mat3;
 typedef Matrix<float, 4, 4> mat4;
 
-typedef Vector<float, 8> vec8;
-typedef Matrix<float, 8, 8> mat8;
+vec2 vec(const float x, const float y) {
+	vec2 r;
+	r(0) = x;
+	r(1) = y;
+	return r;
+}
+vec3 vec(const float x, const float y, const float z) {
+	vec3 r;
+	r(0) = x;
+	r(1) = y;
+	r(2) = z;
+	return r;
+}
 
 };
 #endif
