@@ -299,20 +299,20 @@ typedef Matrix<float, 2, 2> mat2;
 typedef Matrix<float, 3, 3> mat3;
 typedef Matrix<float, 4, 4> mat4;
 
-vec2 vec(const float x, const float y) {
+inline vec2 vec(const float x, const float y) {
 	vec2 r;
 	r(0) = x;
 	r(1) = y;
 	return r;
 }
-vec3 vec(const float x, const float y, const float z) {
+inline vec3 vec(const float x, const float y, const float z) {
 	vec3 r;
 	r(0) = x;
 	r(1) = y;
 	r(2) = z;
 	return r;
 }
-vec4 vec(const float x, const float y, const float z, const float a) {
+inline vec4 vec(const float x, const float y, const float z, const float a) {
 	vec4 r;
 	r(0) = x;
 	r(1) = y;
