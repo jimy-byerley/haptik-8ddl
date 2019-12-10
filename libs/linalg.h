@@ -41,7 +41,7 @@ public:
 #define ELEMENTWISE(_OP_) \
 	Vector<S,dim> operator _OP_ (const Vector<S,dim> & other) const { \
 		Vector<S,dim> result; \
-		for (size_t i=0; i<dim; i++)	result(i) = storage(i) _OP_ other.storage(i); \
+		for (size_t i=0; i<dim; i++)	result(i) = storage[i] _OP_ other.storage[i]; \
 		return result; \
 	}
 	
@@ -64,12 +64,12 @@ public:
 	WITHSCALAR(/)
 #undef WITHSCALAR
 	
-	S norm() {
+	S norm() const {
 		S sum = 0;
 		for (size_t i=0; i<dim; i++)	sum += storage[i]*storage[i];
 		return sqrt(sum);
 	}
-	Vector<S,dim> normalize() 		{ return (*this)/this->norm(); }
+	Vector<S,dim> normalize() const		{ return (*this)/this->norm(); }
 };
 
 template<class S, size_t dim>
@@ -310,6 +310,14 @@ vec3 vec(const float x, const float y, const float z) {
 	r(0) = x;
 	r(1) = y;
 	r(2) = z;
+	return r;
+}
+vec4 vec(const float x, const float y, const float z, const float a) {
+	vec4 r;
+	r(0) = x;
+	r(1) = y;
+	r(2) = z;
+	r(3) = a;
 	return r;
 }
 
