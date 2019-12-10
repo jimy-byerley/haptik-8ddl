@@ -22,6 +22,8 @@ struct Delta {
 	la::vec3 b[N];
 	float ra;
 	float rb;
+	float R;
+	float l;
 };
 
 /*
@@ -33,6 +35,6 @@ inline float sq(const float x)		{ return x*x; }
 inline float deg2rad(const float angle) { return angle * M_PI/180; }
 la::vec4 vec2quat(const la::vec3 &rot);	// quaternion associé a la rotation autour du vecteur, et d'angle sa norme
 la::mat4 quat2mat(const la::vec4 rot);	// matrice de rotation associée au quaternion
-la::mat3 rotz(const float angle);	// matrice de rotation autour de z
+la::mat4 rotz(const float angle);	// matrice de rotation autour de z
 
 #endif
