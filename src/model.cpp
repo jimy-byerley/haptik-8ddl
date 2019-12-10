@@ -63,54 +63,75 @@ vec8 Delta::mgi(const vec8 &X) {
 	size_t v1[] = {0, 3, 4, 7};
 	size_t v2[] = {1, 2, 5, 6};
 	
-	// plan x = a
 	for (size_t i=0; i<4; i++) {
-		vec3 S = a[v1[i]];	// coord centre sphere
-		vec3 K = vec(S(0), b[v1[i]](1), S(2));	// coord projection de S sur le plan
-		vec3 diff = S-K;
-		float sk = (diff).norm();
-		
-		float x1,x2, z1,z2;
-		
-		if (abs(sk) < R) {
-			if ((l+R) >= (b[v1[i]] - K).norm()) {
-				// calcul solutions intersections de deux cercles dans le meme plan
-				float L = hypot(R, sk);
-				float A = b[v1[i]](2) - K(2);
-				float B = b[v1[i]](0) - K(0);
-				float a = 2*A;
-				float b = 2*B;
-				float c = sq(A) + sq(B) - sq(l) + sq(L);
-				float delta = sq(2*a*c) - 4*(sq(a) + sq(b))*(sq(c) - sq(b)*sq(L));
-				float z1 = (2*a*c - sqrt(delta)) / (2*(sq(a)+sq(b)) + K(2));
-				float z2 = (2*a*c + sqrt(delta)) / (2*(sq(a)+sq(b)) + K(2));
-				// calcul x1 et x2
-				if (b != 0) {
-					x1 = (c-a*(z1-K(2)))/b + K(0);
-					x2 = (c-a*(z2-K(2)))/b + K(0);
+		{ // intersections dans un plan x = a
+			size_t i1 = v1[i];
+			float x1,x2, z1,z2;
+			
+			vec3 S = a[i1];	// coord centre sphere
+			vec3 K = vec(S(0), b[i1](1), S(2));	// coord projection de S sur le plan
+			float sk = (S-K).norm();
+			if (abs(sk) < R) {
+				if ((l+R) >= (b[i1] - K).norm()) {
+					// calcul solutions intersections de deux cercles dans le meme plan
+					float L = sqrt(sq(R) - sq(sk));
+					float A = b[i1](2) - K(2);
+					float B = b[i1](0) - K(0);
+					float a = 2*A;
+					float b = 2*B;
+					float c = sq(A) + sq(B) - sq(l) + sq(L);
+					float delta = sq(2*a*c) - 4*(sq(a) + sqrt(b))*(sq(c) - sq(b)*sq(L));
+					float z1 = (2*a*c - sqrt(delta)) / (2*(sq(a)+sq(b)) + K(2));
+					// calcul x1 et x2
+					if (b != 0) 	x2 = (c-a*(z2-K(2)))/b + K(0);
+					else 			x2 = b/2 - sqrt(sq(l) - sq((2*c - sq(a))/(2*a)) ) + K(0); // erreur
 				}
-				else {
-					x1 = b/2 + sqrt(sq(l) - sq((2*c - sq(a))/(2*a)) ) + K(0); // erreur et chgt R
-					x2 = b/2 - sqrt(sq(l) - sq((2*c - sq(a))/(2*a)) ) + K(0); // erreur
-				}
+				// pas de solution
+				else { /* TODO */ }
 			}
-			// pas de solution
+			// 1 ou 0 solution
 			else { /* TODO */ }
+			
+			c[i1] = vec(x2, b[i1](1), z2);
+			q(i1) = atan(z2 / abs(x2-b[i1](0)));
 		}
-		// 1 ou 0 solution
-		else { /* TODO */ }
 		
-		c[v1[i]] = vec(x2, b[v1[i]](1), z2);
-		q(v1[i]) = atan(z2 / abs(x2-b[v1[i]](0)));
-	}
-	
-	// plan y = a
-	for (size_t i=0; i<4; i++) {
-		// ...
+		{ // intersections dans un plan y = a
+			size_t i2 = v2[i];
+			float y1,y2, z1,z2;
+			
+			vec3 S = a[i2];	// coord centre sphere
+			vec3 K = vec(b[i2](1), S(1), S(2));	// coord projection de S sur le plan
+			float sk = (S-K).norm();
+			if (abs(sk) < R) {
+				if ((l+R) >= (b[i2] - K).norm()) {
+					// calcul solutions intersections de deux cercles dans le meme plan
+					float L = sqrt(sq(R) - sq(sk));
+					float A = b[i2](2) - K(2);
+					float B = b[i2](0) - K(0);
+					float a = 2*A;
+					float b = 2*B;
+					float c = sq(A) + sq(B) - sq(l) + sq(L);
+					float delta = sq(2*a*c) - 4*(sq(a) + sqrt(b))*(sq(c) - sq(b)*sq(L));
+					float z1 = (2*a*c - sqrt(delta)) / (2*(sq(a)+sq(b)) + K(2));
+					// calcul x1 et x2
+					if (b != 0) 	y2 = (c-a*(z2-K(2)))/b + K(0);
+					else			y2 = b/2 - sqrt(sq(l) - sq((2*c - sq(a))/(2*a)) ) + K(0);
+				}
+				// pas de solution
+				else { /* TODO */ }
+			}
+			// 1 ou 0 solution
+			else { /* TODO */ }
+			
+			c[i2] = vec(b[i2](1), y2, z2);
+			q(i2) = atan(z2 / abs(y2-b[i2](1)));
+		}
 	}
 	
 	return q;
 }
+
 
 
 vec4 vec2quat(const vec3 &rot) {
