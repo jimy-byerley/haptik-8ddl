@@ -174,7 +174,7 @@ mat8 Delta::mci(const Delta::state &state) {
 	for (size_t i=0; i<N; i++) 		Jd(i) = dot(c[i]-a[i], cross(axis[i], c[i]));
 	
 	mat8 J = Jgt.transpose().inverse();
-	for (size_t i=0; i<N; i++)		J.col(i) = J.col(i) + Jd(i);
+	for (size_t i=0; i<N; i++)		J.col(i) = J.col(i) * Jd(i);
 												
 	return J;
 }
