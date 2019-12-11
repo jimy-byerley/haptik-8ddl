@@ -38,7 +38,7 @@ Delta::Delta() {
 	}
 }
 
-vec8 Delta::mgi(const vec8 &X) {
+Delta::mgic Delta::mgi_complete(const vec8 &X) {
 	mat4 bRe = quat2mat(vec2quat( *((vec3*) &X(3)) ));
 	mat4 eRrg = quat2mat(vec2quat(vec(X(6), X(7), 0)));
 	mat4 eRrd = quat2mat(vec2quat(vec(-X(6), -X(7), 0)));
@@ -56,8 +56,9 @@ vec8 Delta::mgi(const vec8 &X) {
 		a[i](3) = 1;
 	}
 	
-	vec8 q;
-	vec3 c[N];
+	mgic results;
+	vec8 &q = results.q;
+	vec3 *c = results.c;
 	
 	// indices des a[i] a utiliser selon le plan
 	size_t v1[] = {0, 3, 4, 7};
@@ -129,7 +130,7 @@ vec8 Delta::mgi(const vec8 &X) {
 		}
 	}
 	
-	return q;
+	return results;
 }
 
 
