@@ -16,7 +16,7 @@ struct Delta {
 		la::vec3 c[N];
 	};
 	/// fonctions mises a disposition
-	mat8 mci(const vec8 &X);	// J_cinematique = mci(X)
+	mat8 mci(const mgic &c);	// J_cinematique = mci(X)
 	vec8 mgi(const vec8 &X)		{ return mgi_complete(X).q; }
 	mgic mgi_complete(const vec8 &X);	// Q,C,A = mgi(X)
 	vec8 mgd_solve(const vec8 &Q, const vec8 &X0); // calcule X pour Q par proximité a partir d'un point de départ
@@ -29,6 +29,7 @@ struct Delta {
 	float rb;
 	float R;
 	float l;
+	la::vec3 axis[N];
 };
 
 /*
