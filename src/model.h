@@ -11,25 +11,29 @@ typedef la::Matrix<float, N, N> mat8;
  * 	structure contenant les constantes de calcul
 */
 struct Delta {
-	struct mgic {
+	struct state {
+		vec8 X;
 		vec8 q;
 		la::vec3 c[N];
+		la::vec3 a[N];
+		la::mat4 bRe;
 	};
 	/// fonctions mises a disposition
-	mat8 mci(const mgic &c);	// J_cinematique = mci(X)
+	mat8 mci(const state &c);	// J_cinematique = mci(X)
 	vec8 mgi(const vec8 &X)		{ return mgi_complete(X).q; }
-	mgic mgi_complete(const vec8 &X);	// Q,C,A = mgi(X)
+	state mgi_complete(const vec8 &X);	// Q,C,A = mgi(X)
 	vec8 mgd_solve(const vec8 &Q, const vec8 &X0); // calcule X pour Q par proximité a partir d'un point de départ
 	
 	Delta();	// construction des constantes pour accelerer les calculs
 	
+	/* constantes */
 	la::vec4 RgA[N];	// matrices constantes pour les positionnement de A et B
 	la::vec3 b[N];
 	float ra;
 	float rb;
 	float R;
 	float l;
-	la::vec3 axis[N];
+	la::vec3 axis[N];	// axes des pivots par liaison
 };
 
 /*

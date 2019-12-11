@@ -1,6 +1,7 @@
 #include "model.h"
 #include "linalg.h"
 #include <math.h>
+#include <string.h>
 
 using namespace la;
 
@@ -36,9 +37,20 @@ Delta::Delta() {
 		RgA[i] = rotz(phia[i]) * vec(ra, 0, 0, 1);
 		b[i] = vec3(rotz(phib[i]) * vec(rb, 0, 0, 1));
 	}
+	float dirs[] = {
+		0,-1,0,
+		1,0,0,
+		1,0,0,
+		0,1,0,
+		0,1,0,
+		-1,0,0,
+		-1,0,0,
+		0,-1,0
+	};
+	memcpy(axis, dirs, N*3*sizeof(float));
 }
 
-Delta::mgic Delta::mgi_complete(const vec8 &X) {
+Delta::state Delta::mgi_complete(const vec8 &X) {
 	mat4 bRe = quat2mat(vec2quat( *((vec3*) &X(3)) ));
 	mat4 eRrg = quat2mat(vec2quat(vec(X(6), X(7), 0)));
 	mat4 eRrd = quat2mat(vec2quat(vec(-X(6), -X(7), 0)));
@@ -46,19 +58,15 @@ Delta::mgic Delta::mgi_complete(const vec8 &X) {
 	mat4 matg = bRe*eRrg;
 	mat4 matd = bRe*eRrd;
 	
-	vec4 a[N];
-	for (size_t i=0; i<4; i++) {
-		a[i] = matg * RgA[i];
-		a[i](3) = 1;
-	}
-	for (size_t i=4; i<8; i++) {
-		a[i] = matd * RgA[i];
-		a[i](3) = 1;
-	}
-	
-	mgic results;
+	state results;
+	results.X = X;
+	results.bRe = bRe;
 	vec8 &q = results.q;
 	vec3 *c = results.c;
+	vec3 *a = results.a;
+	
+	for (size_t i=0; i<4; i++) 		a[i] = matg * RgA[i];
+	for (size_t i=4; i<8; i++) 		a[i] = matd * RgA[i];
 	
 	// indices des a[i] a utiliser selon le plan
 	size_t v1[] = {0, 3, 4, 7};
@@ -133,6 +141,38 @@ Delta::mgic Delta::mgi_complete(const vec8 &X) {
 	return results;
 }
 
+mat8 Delta::mci(const Delta::state &state) {
+	const vec3 *c = state.c;
+	const vec3 *a = state.a;
+	const mat4 &bRe = state.bRe;
+	
+	mat8 Jgt;
+	vec8 Jd;
+	
+	vec3 vecxp = vec3(bRe.col(0));
+	vec3 vecyp = vec3(bRe.col(1));
+	for (size_t i=0; i<N; i++) {		
+		vec3 ac = c[i] - a[i];
+		vec3 oa_ac = cross(a[i], ac);
+		vec3 crossxp = cross(vecxp, a[i]);
+		vec3 crossyp = cross(vecyp, a[i]);
+		
+		float line[] = {
+			ac(0), ac(1), ac(2),
+			oa_ac(0), oa_ac(1), oa_ac(2), 
+			dot(ac, crossyp),
+			dot(ac, crossxp)
+		};
+		Jgt.col(i) = line;
+	}
+	
+	for (size_t i=0; i<N; i++) 		Jd(i) = dot(c[i]-a[i], cross(axis[i], c[i]));
+	
+	mat8 J = Jgt.transpose().inverse();
+	for (size_t i=0; i<N; i++)		J.col(i) = J.col(i) + Jd(i);
+												
+	return J;
+}
 
 
 vec4 vec2quat(const vec3 &rot) {

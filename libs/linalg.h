@@ -79,15 +79,15 @@ S dot(const Vector<S, dim> & a, const Vector<S, dim> & b) {
 	return result;
 }
 
-template<class S, size_t dim>
+template<class S>
 Vector<S, 3> cross(const Vector<S, 3> & a, const Vector<S, 3> & b) {
-	return Vector<S,3> ({
+	float v[] = {
 		a(1)*b(2)-a(2)*b(1), 
 		a(2)*b(0)-a(0)*b(1),
 		a(0)*b(1)-a(1)*b(0)
-	});
+	};
+	return Vector<S,3> (v);
 }
-
 
 
 
@@ -276,12 +276,28 @@ public:
 		} \
 		return result; \
 	}
-	
+	/*
+	Matrix<S, rows, cols> & operator _OP_= (const S & other) { \
+		for (size_t i=0; i<rows; i++) { \
+			for (size_t j=0; j<cols; j++) \
+				(*this) _OP_= mat(i,j); \
+		} \
+		return *this; \
+	}
+	*/
 	WITHSCALAR(+)
 	WITHSCALAR(-)
 	WITHSCALAR(*)
 	WITHSCALAR(/)
 #undef ELEMENTWISE
+	
+	Matrix<S,cols,rows> transpose() const {
+		Matrix<S,cols,rows> result;
+		for (size_t i=0; i<rows; i++)
+			for (size_t j=0; j<cols; j++)
+				result(j,i) = (*this)(i,j);
+		return result;
+	}
 	
 	Matrix<S,rows,cols> inverse(int *err=nullptr) {
 		Matrix<S, rows, cols> result = *this;
