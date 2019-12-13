@@ -2,8 +2,6 @@
 #include "linalg.h"
 #include <math.h>
 #include <string.h>
-#include <iostream>
-using namespace std;
 using namespace la;
 
 
