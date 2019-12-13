@@ -179,6 +179,21 @@ mat8 Delta::mci(const Delta::state &state) {
 	return J;
 }
 
+vec8 Delta::mgd_solve(const vec8 &q, const vec8 &x0) {
+	const float epsilon = 0.015;	// precision sur q
+	const float dumping = 0.5;
+	vec8 x = x0;
+	vec8 err;
+	do {
+		state s = mgi_complete(x);
+		err = s.q-q;
+		vec8 temp = x - dumping * (mci(s) * err);
+		x = temp;
+	}
+	while (err.norm() > epsilon);
+	return x;
+}
+
 
 vec4 vec2quat(const vec3 &rot) {
 	if (rot(0) == 0 && rot(1) == 0 && rot(2) == 0)
