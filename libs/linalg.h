@@ -83,7 +83,7 @@ template<class S>
 Vector<S, 3> cross(const Vector<S, 3> & a, const Vector<S, 3> & b) {
 	float v[] = {
 		a(1)*b(2)-a(2)*b(1), 
-		a(2)*b(0)-a(0)*b(1),
+		a(2)*b(0)-a(0)*b(2),
 		a(0)*b(1)-a(1)*b(0)
 	};
 	return Vector<S,3> (v);

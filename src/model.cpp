@@ -2,7 +2,6 @@
 #include "linalg.h"
 #include <math.h>
 #include <string.h>
-
 using namespace la;
 
 
@@ -150,7 +149,7 @@ mat8 Delta::mci(const Delta::state &state) {
 	const vec3 *c = state.c;
 	const vec3 *a = state.a;
 	const mat4 &bRe = state.bRe;
-	
+    
 	mat8 Jgt;
 	vec8 Jd;
 	
@@ -161,21 +160,20 @@ mat8 Delta::mci(const Delta::state &state) {
 		vec3 oa_ac = cross(a[i], ac);
 		vec3 crossxp = cross(vecxp, a[i]);
 		vec3 crossyp = cross(vecyp, a[i]);
-		
 		float line[] = {
 			ac(0), ac(1), ac(2),
 			oa_ac(0), oa_ac(1), oa_ac(2), 
-			dot(ac, crossyp),
-			dot(ac, crossxp)
+			dot(ac, crossyp) * ((i>3)?-1:1),
+			dot(ac, crossxp) * ((i>3)?-1:1)
 		};
 		Jgt.col(i) = line;
 	}
 	
 	for (size_t i=0; i<N; i++) 		Jd(i) = dot(c[i]-a[i], cross(axis[i], c[i]));
-	
-	mat8 J = Jgt.transpose().inverse();
+
+    mat8 J = Jgt.transpose().inverse();
 	for (size_t i=0; i<N; i++)		J.col(i) = J.col(i) * Jd(i);
-												
+
 	return J;
 }
 
