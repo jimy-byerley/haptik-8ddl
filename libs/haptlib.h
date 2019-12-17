@@ -16,10 +16,12 @@ public:
 		
 		MIN_POSITION = 52,
 		MAX_POSITION = 48,
+		MAX_VOLTAGE = 36,
 		
 		GOAL_POSITION = 116,
 		GOAL_CURRENT = 102,
 		GOAL_VELOCITY = 104,
+		GOAL_VOLTAGE = 100,
 		
 		VELOCITY_GAIN_I = 76,
 		VELOCITY_GAIN_P = 78,
@@ -30,7 +32,8 @@ public:
 		
 		PRESENT_CURRENT = 126,
 		PRESENT_VELOCITY = 128,
-		PRESENT_POSITION = 132
+		PRESENT_POSITION = 132,
+		PRESENT_VOLTAGE = 124
 	};
 
 	enum DXL_MODE {
@@ -42,12 +45,12 @@ public:
 	
 	typedef uint16_t dxlid;
 
-	static const int32_t MAX_ENCODER = 4095;
-	static const float UNIT_ANGLE = 2*M_PI/MAX_ENCODER;
-	static const float UNIT_ACCELERATION = 214.577;
-	static const float UNIT_VELOCITY = 0.229;
-	static const float UNIT_CURRENT = 2.69;
-	static const float UNIT_VOLTAGE = 0.113;
+	const int32_t MAX_ENCODER = 4095;
+	const float UNIT_ANGLE = 2*M_PI/MAX_ENCODER;
+	const float UNIT_ACCELERATION = 214.577;
+	const float UNIT_VELOCITY = 0.229;
+	const float UNIT_CURRENT = 2.69;
+	const float UNIT_VOLTAGE = 0.00113;
 	
 	/*
 		recuperation d'informations
@@ -83,7 +86,7 @@ public:
 	// voltage
 	float get_voltage(dxlid id) {
 		int16_t _voltage;
-		readRegister(id, DXLREG::PRESENT_POSITION, 2, (uint32_t*) &_voltage);
+		readRegister(id, DXLREG::PRESENT_VOLTAGE, 2, (uint32_t*) &_voltage);
 		return _voltage * UNIT_VOLTAGE;
 	}
 
@@ -105,7 +108,9 @@ public:
 	/// voltage comme fraction de l'alim (1 pour max)
 	void set_voltage(dxlid id, float voltage) {
 		int16_t _voltage = voltage / UNIT_VOLTAGE;
-		writeRegister(id, DXLREG::GOAL_CURRENT, 2, (uint8_t*) &_voltage);
+		writeRegister(id, DXLREG::GOAL_VOLTAGE, 2, (uint8_t*) &_voltage);
+		Serial.print("voltage set to");
+		Serial.println(_voltage);
 	}
 
 	/// courant en mA
@@ -120,6 +125,13 @@ public:
 		int32_t _position = position / UNIT_ANGLE;
 		//set_mode(id, DXL_MODE::POSITION);
 		writeRegister(id, DXLREG::GOAL_POSITION, 4, (uint8_t*) &_position);
+	}
+	
+	/// velocity en rad
+	void set_velocity(dxlid id, float velocity) {
+		int32_t _velocity = velocity / UNIT_VELOCITY;
+		//set_mode(id, DXL_MODE::POSITION);
+		writeRegister(id, DXLREG::GOAL_VELOCITY, 4, (uint8_t*) &_velocity);
 	}
 	
 	/*
@@ -148,6 +160,11 @@ public:
 	///position max (0 - 4095)
 	void set_max_position(dxlid id, int32_t max) {
 		writeRegister(id, DXLREG::MAX_POSITION, 4,(uint8_t*) &max);
+	}
+	
+	void set_max_voltage(dxlid id, float max) {
+		uint16_t _voltage = 885; //max / UNIT_VOLTAGE;
+		writeRegister(id, DXLREG::MAX_VOLTAGE, 2, (uint8_t*) &_voltage);
 	}
 	
 };
