@@ -84,7 +84,7 @@ Delta::state Delta::mgi_complete(const vec8 &X) {
 			vec3 K = vec(S(0), b[i1](1), S(2));	// coord projection de S sur le plan
 			float sk = (S-K).norm();
             
-			if (abs(sk) < R) {
+			if (fabs(sk) < R) {
 				if ((l+R) >= (b[i1] - K).norm()) {
 					// calcul solutions intersections de deux cercles dans le meme plan
 					float L = sqrt(sq(R) - sq(sk));
@@ -106,7 +106,7 @@ Delta::state Delta::mgi_complete(const vec8 &X) {
 			else { /* TODO */ }
 			
 			c[i1] = vec(x2, b[i1](1), z2);
-			q(i1) = atan(z2 / abs(x2-b[i1](0)));
+			q(i1) = atan(z2 / fabs(x2-b[i1](0)));
 		}
 		
 		{ // intersections dans un plan y = a
@@ -116,7 +116,7 @@ Delta::state Delta::mgi_complete(const vec8 &X) {
 			vec3 S = a[i2];	// coord centre sphere
 			vec3 K = vec(b[i2](0), S(1), S(2));	// coord projection de S sur le plan
 			float sk = (S-K).norm();
-			if (abs(sk) < R) {
+			if (fabs(sk) < R) {
 				if ((l+R) >= (b[i2] - K).norm()) {
 					// calcul solutions intersections de deux cercles dans le meme plan
 					float L = sqrt(sq(R) - sq(sk));
@@ -138,7 +138,7 @@ Delta::state Delta::mgi_complete(const vec8 &X) {
 			else { /* TODO */ }
 			
 			c[i2] = vec(b[i2](0), y2, z2);
-			q(i2) = atan(z2 / abs(y2-b[i2](1)));
+			q(i2) = atan(z2 / fabs(y2-b[i2](1)));
 		}
 	}
 	
