@@ -20,9 +20,8 @@ struct Delta {
 	};
 	/// fonctions mises a disposition
 	mat8 mci(const state &c);	// J_cinematique = mci(X)
-	vec8 mgi(const vec8 &X)		{ return mgi_complete(X).q; }
-	state mgi_complete(const vec8 &X);	// Q,C,A = mgi(X)
-	vec8 mgd_solve(const vec8 &Q, const vec8 &X0); // calcule X pour Q par proximité a partir d'un point de départ
+	state mgi(const vec8 &X);	// Q,C,A,bRe = mgi(X)
+	state mgd_solve(const vec8 &Q, const vec8 &X0); // calcule X pour Q par proximité a partir d'un point de départ
 	
 	Delta();	// construction des constantes pour accelerer les calculs
 	

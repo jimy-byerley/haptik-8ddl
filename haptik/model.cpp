@@ -50,7 +50,7 @@ Delta::Delta() {
 	memcpy(axis, dirs, N*3*sizeof(float));
 }
 
-Delta::state Delta::mgi_complete(const vec8 &X) {
+Delta::state Delta::mgi(const vec8 &X) {
 	mat4 bRe = quat2mat(vec2quat( *((vec3*) &X(3)) ));
     bRe(0,3) = X(0);
     bRe(1,3) = X(1);
@@ -177,19 +177,19 @@ mat8 Delta::mci(const Delta::state &state) {
 	return J;
 }
 
-vec8 Delta::mgd_solve(const vec8 &q, const vec8 &x0) {
+Delta::state Delta::mgd_solve(const vec8 &q, const vec8 &x0) {
 	const float epsilon = 0.015;	// precision sur q
 	const float dumping = 0.5;
 	vec8 x = x0;
 	vec8 err;
-	do {
-		state s = mgi_complete(x);
+	state s;
+	while(true) {
+		s = mgi(x);
 		err = s.q-q;
-		vec8 temp = x - dumping * (mci(s) * err);
-		x = temp;
+		if (err.norm() <= epsilon)	break;
+		x = x - dumping * (mci(s) * err);
 	}
-	while (err.norm() > epsilon);
-	return x;
+	return s;
 }
 
 
