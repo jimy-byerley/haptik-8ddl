@@ -149,7 +149,7 @@ void loop() {
 						break;
 					case ForceFeedback::BLOCK:
 						// le vecteur passé est une direction (donc vecteur normé), si sa norme n'est pas 1, elle servira de facteur a l'asservissement
-						feedback_dir = current_corr * model.mci(pose) * feedback.vec;
+						feedback_dir = current_corr * (model.mci(pose) * feedback.vec);
 						feedback_origin = pose.X;
 						break;
 				}
@@ -173,8 +173,8 @@ void loop() {
 	
 	// apply limitations
 	for (size_t i=0; i<N; i++) {
-		if 		(angle(i) < min_angle)	current(i) = resist_current;
-		else if (angle(i) > max_angle)	current(i) = -resist_current;
+		if 		(angle(i) < min_angle)	current(i) += resist_current;
+		else if (angle(i) > max_angle)	current(i) -= resist_current;
 	}
 	
 	// apply torques to motors
