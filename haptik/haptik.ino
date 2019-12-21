@@ -71,6 +71,9 @@ bool enable_assist = false;
 HaptikDXL dxl;
 Delta model;
 vec8 last_pose;
+ForceFeedback feedback;
+vec8 feedback_dir;
+vec8 feedback_origin;
 
 void setup() {
 	Serial.begin(57600);
@@ -99,6 +102,10 @@ void setup() {
 		// setup current mode for the rest of the program
 		dxl.set_mode(i, HaptikDXL::CURRENT);
 	}
+	
+	feedback = ForceFeedback {ForceFeedback::NONE, vec8(0.)};
+	feedback_dir = vec8(0.);
+	feedback_origin = last_pose;
 }
 
 void loop() {
@@ -120,12 +127,28 @@ void loop() {
 	send_pose(pose.X);	// send to computer
 	
 	if (enable_feedback) {
-		// receive order
-		ForceFeedback feedback = receive_feedback();
+		// receive order and setup execution datas
+		feedback = receive_feedback();
 		switch (feedback.type) {
 			case ForceFeedback::FORCE:
+				feedback_dir = model.mci(pose) * feedback.vec;
 				break;
-			case ForceFeedback::BLOCK:	
+			case ForceFeedback::BLOCK:
+				// le vecteur passé est une direction (donc vecteur normé), si sa norme n'est pas 1, elle servira de facteur a l'asservissement
+				feedback_dir = model.mci(pose) * feedback.vec;
+				feedback_origin = pose.X;
+				break;
+		}
+		
+		// apply feedback
+		const float FORCE_CURRENT = 1.;	// (Nm/mA)	TODO: a determiner experimentalement
+		const float CURRENT_CORR = 5.;	// (mA/mm)	TODO: a affiner
+		switch (feedback.type) {
+			case ForceFeedback::FORCE:
+				current = current + FORCE_CURRENT*feedback_dir;
+				break;
+			case ForceFeedback::BLOCK:
+				current = current + CURRENT_CORR*dot(pose.X - feedback_origin, feedback.vec) * feedback_dir;
 				break;
 		}
 	}
