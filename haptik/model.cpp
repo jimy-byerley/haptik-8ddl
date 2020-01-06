@@ -6,12 +6,12 @@ using namespace la;
 
 
 Delta::Delta() {
-	ra = 50;	// (mm) angle de placement des rotules sur la plateforme
-	rb = 200;	// (mm) angle de placement des pivotes des moteurs
-	R = 220; // (mm) longueur de tringle (tube noir)
-	l = 80; // (mm) longueur de levier des servo
-	const float phia_base = deg2rad(18);
-	const float phib_base = deg2rad(6);
+	ra = 39;	// (mm) angle de placement des rotules sur la plateforme
+	rb = 125;	// (mm) angle de placement des pivotes des moteurs
+	R = 222; // (mm) longueur de tringle (tube noir)
+	l = 77; // (mm) longueur de levier des servo
+	const float phia_base = deg2rad(23.19);
+	const float phib_base = deg2rad(12.225);
 	float phia[N] = {
 		phia_base,
 		pi/2 - phia_base,
