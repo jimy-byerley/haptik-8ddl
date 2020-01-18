@@ -110,7 +110,7 @@ public:
 		S tmp;
 		
 		if (A.rows != A.cols)	{
-			if(err)	*err = 2;
+			if(err)		*err = 2;
 			return *this;
 		}
 		
@@ -131,11 +131,10 @@ public:
 			}
 
 			// check for singular matrix
-			if (A(pivrow,k) == 0.0f)
-				if(err)	{
-					*err = 1;
-					return *this;
-				}
+			if (A(pivrow,k) == 0.0f) {
+				if(err) 	*err = 1;
+				return *this;
+			}
 
 			// Execute pivot (row swap) if needed
 			if (pivrow != k)
