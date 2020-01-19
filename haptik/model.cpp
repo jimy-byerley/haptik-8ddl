@@ -177,17 +177,23 @@ mat8 Delta::mci(const Delta::state &state) {
 	return J;
 }
 
+#include <stdio.h>
+
 Delta::state Delta::mgd_solve(const vec8 &q, const vec8 &x0) {
 	const float epsilon = 0.015;	// precision sur q
 	const float dumping = 0.5;
 	vec8 x = x0;
 	vec8 err;
 	state s;
-	while(true) {
+	for (int j=0; j<8; j++) {
 		s = mgi(x);
-		err = s.q-q;
+		err = s.q - q;
+		for (int i=0; i<N; i++)		printf("  %f", s.q(i));
+		printf("\n");
 		if (err.norm() <= epsilon)	break;
+		printf("  err %d\n", err.norm());
 		x = x - dumping * (mci(s) * err);
+		
 	}
 	return s;
 }
